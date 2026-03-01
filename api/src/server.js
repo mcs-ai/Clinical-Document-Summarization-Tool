@@ -4,11 +4,21 @@ import { getConfig } from "./config.js";
 import { healthRoutes } from "./routes/health.js";
 import { summariesRoutes } from "./routes/summaries.js";
 import { authPlugin } from "./middleware/auth.js";
+import rateLimit from "@fastify/rate-limit";
 
 async function buildServer(config) {
   const app = Fastify({ logger: true });
 
+  // authentication first
   await app.register(authPlugin, { tenantKeys: config.tenantKeys }); // register auth plugin with tenant keys from config so no need to get config from env again in the plugin
+
+  // next is rate limit
+  await app.register(rateLimit, {
+    max: config.rateLimit.max, //set in env, default 30
+    timeWindow: config.rateLimit.timeWindow, //set in env, default "1 minute"
+    keyGenerator: (req) => req.tenant?.tenantId || req.ip
+  });
+
   await app.register(healthRoutes);
   await app.register(summariesRoutes);
 

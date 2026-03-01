@@ -1,14 +1,19 @@
+import fp from "fastify-plugin";
 
-export function authPlugin(app, opts, done) {
+export const authPlugin = fp(async function authPlugin(app, opts) {
   const tenantKeys = opts?.tenantKeys || {};
 
+  // Build reverse lookup: apiKey -> tenantId
   const keyToTenant = new Map();
   for (const [tenantId, keys] of Object.entries(tenantKeys)) {
     const list = Array.isArray(keys) ? keys : [keys];
     for (const k of list) keyToTenant.set(String(k), tenantId);
   }
 
+  //app.log.info({ tenants: Object.keys(tenantKeys), keysCount: keyToTenant.size }, "auth: plugin registered");
+
   app.addHook("preHandler", async (req, reply) => {
+    // Allow unauthenticated health checks
     if (req.url === "/health" || req.url === "/ready") return;
 
     const auth = req.headers.authorization || "";
@@ -32,6 +37,4 @@ export function authPlugin(app, opts, done) {
 
     req.tenant = { tenantId };
   });
-
-  done();
-}
+});

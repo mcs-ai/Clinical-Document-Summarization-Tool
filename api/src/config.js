@@ -2,6 +2,8 @@
 export function getConfig() {
   const port = Number(process.env.PORT || 3000);
   const host = process.env.HOST || "0.0.0.0";
+  const rateLimitMax = Number(process.env.RATE_LIMIT_MAX || 30);
+  const rateLimitWindow = process.env.RATE_LIMIT_WINDOW || "1 minute";
 
   const tenantKeysJson = process.env.TENANT_KEYS_JSON || "{}";
   let tenantKeys = {};
@@ -12,5 +14,10 @@ export function getConfig() {
     tenantKeys = {};
   }
 
-  return { port, host, tenantKeys };
+  return {
+    port,
+    host,
+    tenantKeys,
+    rateLimit: { max: rateLimitMax, timeWindow: rateLimitWindow }
+  };
 }
