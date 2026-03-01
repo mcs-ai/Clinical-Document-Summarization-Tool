@@ -18,8 +18,11 @@ export async function summariesRoutes(app) {
 
     const tenantId = req.tenant?.tenantId; // derived from API key
     if (!tenantId) {
-      return reply.code(500).send({
-        error: { code: "SERVER_MISCONFIG", message: "Auth tenant not set" }
+      // if auth hook failed to stop the request this will catch it.  we
+      // expect the plugin to have already returned 401, but 500 was showing
+      // up because the handler executed with no tenant attached.
+      return reply.code(401).send({
+        error: { code: "UNAUTHORIZED", message: "Missing or invalid API key" }
       });
     }
 
