@@ -22,11 +22,17 @@ export function getConfig() {
     }
   };
 
+  const generation = {
+  soapMaxTokens: Number(process.env.SOAP_MAX_TOKENS || 900),
+  plainMaxTokens: Number(process.env.PLAIN_MAX_TOKENS || 500)
+};
+
   return {
     port,
     host,
     tenantKeys,
     rateLimit: { max: rateLimitMax, timeWindow: rateLimitWindow },
-    llm
+    llm,
+    generation
   };
 }

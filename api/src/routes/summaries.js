@@ -34,7 +34,7 @@ export async function summariesRoutes(app) {
       });
     }
 
-    // Optional: allow tenantId in body for debugging, but enforce match if present
+    // allow tenantId in body for debugging, but enforce match if present
     if (tenantIdFromBody && tenantIdFromBody !== tenantId) {
       return reply.code(403).send({
         error: { code: "FORBIDDEN", message: "tenantId does not match API key" }
@@ -56,7 +56,7 @@ export async function summariesRoutes(app) {
       const result = await llm.chatComplete({
         messages,
         temperature,
-        maxTokens: 800
+        maxTokens: config.generation.soapMaxTokens
       });
 
       soapJsonText = result.content;
@@ -95,7 +95,7 @@ export async function summariesRoutes(app) {
         const resultPlain = await llm.chatComplete({
           messages: plainMessages,
           temperature,
-          maxTokens: 500
+          maxTokens: config.generation.plainMaxTokens
         });
 
         plainText = resultPlain.content;
