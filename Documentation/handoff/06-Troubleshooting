@@ -1,0 +1,14 @@
+# Troubleshooting
+
+## 401 Unauthorized
+- Missing/invalid Authorization: Bearer <apiKey>
+
+## 403 Forbidden
+- tenantId in request body does not match tenant for the provided key
+
+## 413 Payload Too Large
+- Input exceeds maximum configured size
+
+## 5xx / Upstream errors
+- Model endpoint timeout or invalid model output
+- Check App Insights logs and AZURE_* configuration
